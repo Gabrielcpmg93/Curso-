@@ -1,20 +1,20 @@
 
 import { GoogleGenAI } from "@google/genai";
 
-const API_KEY = process.env.API_KEY;
-
-if (!API_KEY) {
-    console.error("Gemini API key is not set. Please set the API_KEY environment variable.");
-}
-
-const ai = new GoogleGenAI({ apiKey: API_KEY });
-
 export const askGemini = async (courseTitle: string, userQuestion: string): Promise<string> => {
+    // API_KEY is fetched and the client is initialized only when the function is called.
+    // This prevents a crash on app load if process.env is not immediately available.
+    const API_KEY = process.env.API_KEY;
+
     if (!API_KEY) {
-        return "Erro: A chave da API do Gemini não está configurada. Por favor, configure a variável de ambiente API_KEY.";
+        const errorMessage = "Erro: A chave da API do Gemini não está configurada. Por favor, configure a variável de ambiente API_KEY.";
+        console.error(errorMessage);
+        return errorMessage;
     }
 
     try {
+        const ai = new GoogleGenAI({ apiKey: API_KEY });
+
         const prompt = `
             Você é um instrutor especialista em manutenção de celulares. 
             Seu conhecimento é focado no tópico: "${courseTitle}".
