@@ -1,6 +1,7 @@
 
 import React, { useEffect, useRef } from 'react';
 import type { Course } from '../types';
+import { MotherboardDiagram } from './MotherboardDiagram';
 
 interface CourseDetailModalProps {
   course: Course | null;
@@ -63,6 +64,14 @@ export const CourseDetailModal: React.FC<CourseDetailModalProps> = ({ course, is
             </div>
             
             <div className="p-6 overflow-y-auto flex-grow">
+
+              {course.id === 'motherboard' && (
+                <div className="mb-6 p-4 bg-gray-900 rounded-lg border border-gray-700">
+                  <h3 className="text-lg font-semibold text-white mb-3 text-center">Diagrama Simplificado da Placa-mãe</h3>
+                  <MotherboardDiagram />
+                </div>
+              )}
+
               <h3 className="text-lg font-semibold text-white mb-4">Tópicos abordados:</h3>
               <ul className="space-y-3 list-inside text-gray-300">
                 {course.topics.map((topic, index) => (
