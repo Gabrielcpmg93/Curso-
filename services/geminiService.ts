@@ -16,12 +16,9 @@ export const askGemini = async (courseTitle: string, userQuestion: string): Prom
 
         const response = await ai.models.generateContent({
             model: 'gemini-2.5-flash',
-            // Switch to the more explicit Content[] format for the 'contents' parameter.
-            // While a simple string is valid, this structured format can be more robust.
-            contents: [{
-                role: "user",
-                parts: [{ text: prompt }],
-            }],
+            // Reverted to the simpler string format for 'contents' to ensure maximum compatibility
+            // and resolve the communication error.
+            contents: prompt,
         });
 
         // Use optional chaining for safer access and provide a fallback.
