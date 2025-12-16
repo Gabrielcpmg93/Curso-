@@ -25,6 +25,11 @@ export const CourseDetailModal: React.FC<CourseDetailModalProps> = ({ course, is
   
   if (!isOpen && !course) return null;
 
+  const formatTopic = (topic: string) => {
+    // Basic markdown for bold text
+    return topic.replace(/\*\*(.*?)\*\*/g, '<strong class="text-white">$1</strong>');
+  };
+
   return (
     <div
       className={`fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-70 transition-opacity duration-300 ${
@@ -61,7 +66,11 @@ export const CourseDetailModal: React.FC<CourseDetailModalProps> = ({ course, is
               <h3 className="text-lg font-semibold text-white mb-4">Tópicos abordados:</h3>
               <ul className="space-y-3 list-inside text-gray-300">
                 {course.topics.map((topic, index) => (
-                  <li key={index} className="leading-relaxed">{topic}</li>
+                  <li 
+                    key={index} 
+                    className="leading-relaxed"
+                    dangerouslySetInnerHTML={{ __html: formatTopic(topic) }}
+                  />
                 ))}
               </ul>
             </div>
