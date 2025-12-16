@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import type { Course } from '../types';
 import { askGemini } from '../services/geminiService';
+import { GeminiResponse } from './GeminiResponse';
 
 interface CourseDetailModalProps {
   course: Course | null;
@@ -122,7 +123,7 @@ export const CourseDetailModal: React.FC<CourseDetailModalProps> = ({ course, is
 
                 {geminiResponse && (
                   <div className="mt-6 p-4 bg-gray-900/50 border border-gray-700 rounded-md">
-                     <p className="text-white whitespace-pre-wrap font-mono text-sm leading-relaxed">{geminiResponse}</p>
+                     <GeminiResponse content={geminiResponse} />
                   </div>
                 )}
               </div>
