@@ -1,8 +1,6 @@
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import type { Course } from '../types';
-import { askGemini } from '../services/geminiService';
-import { GeminiResponse } from './GeminiResponse';
 
 interface CourseDetailModalProps {
   course: Course | null;
@@ -10,28 +8,8 @@ interface CourseDetailModalProps {
   onClose: () => void;
 }
 
-const LoadingSpinner: React.FC = () => (
-  <div className="flex justify-center items-center space-x-2">
-    <div className="animate-pulse rounded-full bg-cyan-400 h-3 w-3"></div>
-    <div className="animate-pulse rounded-full bg-cyan-400 h-3 w-3 delay-150"></div>
-    <div className="animate-pulse rounded-full bg-cyan-400 h-3 w-3 delay-300"></div>
-  </div>
-);
-
 export const CourseDetailModal: React.FC<CourseDetailModalProps> = ({ course, isOpen, onClose }) => {
-  const [question, setQuestion] = useState('');
-  const [geminiResponse, setGeminiResponse] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
   const modalContentRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    // Reset Gemini state when modal opens with a new course
-    if (isOpen && course) {
-      setQuestion('');
-      setGeminiResponse('');
-      setIsLoading(false);
-    }
-  }, [isOpen, course]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -44,15 +22,6 @@ export const CourseDetailModal: React.FC<CourseDetailModalProps> = ({ course, is
       window.removeEventListener('keydown', handleKeyDown);
     };
   }, [onClose]);
-
-  const handleAskQuestion = async () => {
-    if (!question.trim() || !course) return;
-    setIsLoading(true);
-    setGeminiResponse('');
-    const response = await askGemini(course.title, question);
-    setGeminiResponse(response);
-    setIsLoading(false);
-  };
   
   if (!isOpen && !course) return null;
 
@@ -89,44 +58,12 @@ export const CourseDetailModal: React.FC<CourseDetailModalProps> = ({ course, is
             </div>
             
             <div className="p-6 overflow-y-auto flex-grow">
-              <h3 className="text-lg font-semibold text-white mb-3">Tópicos abordados:</h3>
-              <ul className="space-y-2 list-disc list-inside text-gray-300">
+              <h3 className="text-lg font-semibold text-white mb-4">Tópicos abordados:</h3>
+              <ul className="space-y-3 list-inside text-gray-300">
                 {course.topics.map((topic, index) => (
-                  <li key={index}>{topic}</li>
+                  <li key={index} className="leading-relaxed">{topic}</li>
                 ))}
               </ul>
-              
-              <div className="mt-8 pt-6 border-t border-gray-700">
-                <h3 className="text-lg font-semibold text-white mb-3">
-                  Pergunte ao Instrutor IA
-                </h3>
-                <p className="text-sm text-gray-400 mb-4">
-                  Tem alguma dúvida sobre {course.title}? Escreva abaixo e nossa IA especialista irá responder.
-                </p>
-                <div className="space-y-4">
-                  <textarea
-                    value={question}
-                    onChange={(e) => setQuestion(e.target.value)}
-                    placeholder="Ex: Qual a melhor temperatura para remover um conector USB-C?"
-                    className="w-full p-3 bg-gray-900 border border-gray-600 rounded-md text-gray-200 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 transition"
-                    rows={3}
-                    disabled={isLoading}
-                  />
-                  <button
-                    onClick={handleAskQuestion}
-                    disabled={isLoading || !question.trim()}
-                    className="w-full bg-cyan-600 hover:bg-cyan-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white font-bold py-2 px-4 rounded-md transition-all duration-300 flex items-center justify-center"
-                  >
-                    {isLoading ? <LoadingSpinner /> : 'Enviar Pergunta'}
-                  </button>
-                </div>
-
-                {geminiResponse && (
-                  <div className="mt-6 p-4 bg-gray-900/50 border border-gray-700 rounded-md">
-                     <GeminiResponse content={geminiResponse} />
-                  </div>
-                )}
-              </div>
             </div>
           </>
         )}
