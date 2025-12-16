@@ -2,17 +2,12 @@
 import { GoogleGenAI } from "@google/genai";
 
 export const askGemini = async (courseTitle: string, userQuestion: string): Promise<string> => {
-    // API_KEY is fetched and the client is initialized only when the function is called.
-    // This prevents a crash on app load if process.env is not immediately available.
-    const API_KEY = process.env.API_KEY;
-
-    if (!API_KEY) {
-        const errorMessage = "Erro: A chave da API do Gemini não está configurada. Por favor, configure a variável de ambiente API_KEY.";
-        console.error(errorMessage);
-        return errorMessage;
-    }
-
     try {
+        const API_KEY = process.env.API_KEY;
+        
+        // Let the SDK handle the missing API key, which will throw an error
+        // that is caught by the catch block below. This avoids displaying a
+        // specific error message about API keys to the user.
         const ai = new GoogleGenAI({ apiKey: API_KEY });
 
         const prompt = `
@@ -29,11 +24,9 @@ export const askGemini = async (courseTitle: string, userQuestion: string): Prom
             contents: prompt,
         });
 
-        if (response.text) {
-            return response.text;
-        } else {
-             return "Não consegui gerar uma resposta. Tente novamente.";
-        }
+        // Use optional chaining for safer access and provide a fallback.
+        return response?.text || "Não consegui gerar uma resposta. Tente novamente.";
+        
     } catch (error) {
         console.error("Error calling Gemini API:", error);
         return "Ocorreu um erro ao tentar se comunicar com a IA. Por favor, verifique o console para mais detalhes.";
